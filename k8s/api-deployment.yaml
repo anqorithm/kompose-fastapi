@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yml
+    kompose.version: 1.35.0 (HEAD)
+  labels:
+    io.kompose.service: api
+  name: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: api
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f docker-compose.yml
+        kompose.version: 1.35.0 (HEAD)
+      labels:
+        io.kompose.service: api
+    spec:
+      containers:
+        - env:
+            - name: API_PREFIX
+              value: /api/v1
+            - name: APP_DESCRIPTION
+              value: Kompose FastAPI
+            - name: APP_ENV
+              value: development
+            - name: APP_NAME
+              value: Kompose FastAPI
+            - name: APP_VERSION
+              value: 1.0.0
+            - name: DEBUG
+              value: "true"
+          image: anqorithm/kompose-fastapi:latest
+          name: api
+          ports:
+            - containerPort: 8000
+              protocol: TCP
+      restartPolicy: Always
